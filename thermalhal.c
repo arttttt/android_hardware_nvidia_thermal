@@ -367,6 +367,16 @@ ssize_t get_cpu_usages(cpu_usage_t *list) {
     FILE *file;
 
     if (list == NULL) {
+        /*
+         * num_cpus_total is only allocated when the config carries a
+         * cpu_usages element. Without that element it is still NULL, and a
+         * caller asking how many entries to expect would take the process
+         * down with it.
+         */
+        if (num_cpus_total == NULL) {
+            ALOGE("%s: the config declares no cpu_usages element", __func__);
+            return -EINVAL;
+        }
         return *num_cpus_total;
     }
 
