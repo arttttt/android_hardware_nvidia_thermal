@@ -40,14 +40,22 @@ Return<void> Thermal::getTemperatures(getTemperatures_cb _hidl_cb) {
   status.code = ThermalStatusCode::SUCCESS;
   hidl_vec<Temperature> temperatures;
 
-  temperatures.resize(pd_count);
-  int size = get_temperatures(reinterpret_cast<temperature_t*>(&temperatures[0]), pd_count);
-  if (size < 0) {
+  ssize_t count = get_temperatures(NULL, 0);
+  if (count < 0) {
     status.code = ThermalStatusCode::FAILURE;
-    status.debugMessage = strerror(-size);
+    status.debugMessage = strerror(-count);
   }
-  else
-    temperatures.resize(size);
+  else if (count > 0) {
+    temperatures.resize(count);
+    ssize_t size = get_temperatures(reinterpret_cast<temperature_t*>(&temperatures[0]), count);
+    if (size < 0) {
+      status.code = ThermalStatusCode::FAILURE;
+      status.debugMessage = strerror(-size);
+      temperatures.resize(0);
+    }
+    else
+      temperatures.resize(size);
+  }
 
   _hidl_cb(status, temperatures);
   return Void();
@@ -58,14 +66,22 @@ Return<void> Thermal::getCpuUsages(getCpuUsages_cb _hidl_cb) {
   status.code = ThermalStatusCode::SUCCESS;
   hidl_vec<CpuUsage> cpuUsages;
 
-  cpuUsages.resize(pd_count);
-  int size = get_cpu_usages(reinterpret_cast<cpu_usage_t*>(&cpuUsages[0]));
-  if (size < 0) {
+  ssize_t count = get_cpu_usages(NULL);
+  if (count < 0) {
     status.code = ThermalStatusCode::FAILURE;
-    status.debugMessage = strerror(-size);
+    status.debugMessage = strerror(-count);
   }
-  else
-    cpuUsages.resize(size);
+  else if (count > 0) {
+    cpuUsages.resize(count);
+    ssize_t size = get_cpu_usages(reinterpret_cast<cpu_usage_t*>(&cpuUsages[0]));
+    if (size < 0) {
+      status.code = ThermalStatusCode::FAILURE;
+      status.debugMessage = strerror(-size);
+      cpuUsages.resize(0);
+    }
+    else
+      cpuUsages.resize(size);
+  }
 
   _hidl_cb(status, cpuUsages);
   return Void();
@@ -76,14 +92,22 @@ Return<void> Thermal::getCoolingDevices(getCoolingDevices_cb _hidl_cb) {
   status.code = ThermalStatusCode::SUCCESS;
   hidl_vec<CoolingDevice> coolingDevices;
 
-  coolingDevices.resize(pd_count);
-  int size = get_cooling_devices(reinterpret_cast<cooling_device_t*>(&coolingDevices[0]), pd_count);
-  if (size < 0) {
+  ssize_t count = get_cooling_devices(NULL, 0);
+  if (count < 0) {
     status.code = ThermalStatusCode::FAILURE;
-    status.debugMessage = strerror(-size);
+    status.debugMessage = strerror(-count);
   }
-  else
-    coolingDevices.resize(size);
+  else if (count > 0) {
+    coolingDevices.resize(count);
+    ssize_t size = get_cooling_devices(reinterpret_cast<cooling_device_t*>(&coolingDevices[0]), count);
+    if (size < 0) {
+      status.code = ThermalStatusCode::FAILURE;
+      status.debugMessage = strerror(-size);
+      coolingDevices.resize(0);
+    }
+    else
+      coolingDevices.resize(size);
+  }
 
   _hidl_cb(status, coolingDevices);
   return Void();
