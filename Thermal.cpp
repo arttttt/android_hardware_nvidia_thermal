@@ -40,7 +40,7 @@ Return<void> Thermal::getTemperatures(getTemperatures_cb _hidl_cb) {
   status.code = ThermalStatusCode::SUCCESS;
   hidl_vec<Temperature> temperatures;
 
-  ssize_t count = get_temperatures(NULL, 0);
+  ssize_t count = pd_count < 0 ? pd_count : get_temperatures(NULL, 0);
   if (count < 0) {
     status.code = ThermalStatusCode::FAILURE;
     status.debugMessage = strerror(-count);
@@ -66,7 +66,7 @@ Return<void> Thermal::getCpuUsages(getCpuUsages_cb _hidl_cb) {
   status.code = ThermalStatusCode::SUCCESS;
   hidl_vec<CpuUsage> cpuUsages;
 
-  ssize_t count = get_cpu_usages(NULL);
+  ssize_t count = pd_count < 0 ? pd_count : get_cpu_usages(NULL);
   if (count < 0) {
     status.code = ThermalStatusCode::FAILURE;
     status.debugMessage = strerror(-count);
@@ -92,7 +92,7 @@ Return<void> Thermal::getCoolingDevices(getCoolingDevices_cb _hidl_cb) {
   status.code = ThermalStatusCode::SUCCESS;
   hidl_vec<CoolingDevice> coolingDevices;
 
-  ssize_t count = get_cooling_devices(NULL, 0);
+  ssize_t count = pd_count < 0 ? pd_count : get_cooling_devices(NULL, 0);
   if (count < 0) {
     status.code = ThermalStatusCode::FAILURE;
     status.debugMessage = strerror(-count);
